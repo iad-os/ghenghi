@@ -1,0 +1,101 @@
+{
+  "name": "@iad-os/ghenghi",
+  "version": "0.0.1-beta",
+  "description": "Yes... only if necessary, but... I will kill Ghii",
+  "maintainers": [
+    {
+      "name": "Nicola Vurchio",
+      "email": "nicola.vurchio@iad2.it"
+    },
+    {
+      "name": "Daniele Fiungo",
+      "email": "daniele.fiungo@iad2.it"
+    },
+    {
+      "name": "Irene La Bollita",
+      "email": "irene.labollita@iad2.it"
+    }
+  ],
+  "author": "Nicola Vurchio <nicola.vurchio@iad2.it>",
+  "keywords": [
+    "node",
+    "config"
+  ],
+  "main": "dist/lib/ghenghi.js",
+  "types": "dist/types/ghenghi.d.ts",
+  "files": [
+    "dist"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iad-os/ghenghi.git"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=10.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .ts,.tsx",
+    "prebuild": "rimraf dist",
+    "build": "tsc",
+    "start": "rollup -c rollup.config.ts -w",
+    "test": "jest --coverage",
+    "test:watch": "jest --coverage --watch",
+    "test:prod": "npm run lint && npm run test -- --no-cache",
+    "deploy-docs": "ts-node tools/gh-pages-publish"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "ts-jest"
+    },
+    "testEnvironment": "node",
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx)$",
+    "moduleFileExtensions": [
+      "ts",
+      "js"
+    ],
+    "coveragePathIgnorePatterns": [
+      "/node_modules/",
+      "src/__test__/"
+    ],
+    "coverageThreshold": {
+      "global": {
+        "branches": 90,
+        "functions": 95,
+        "lines": 95,
+        "statements": 95
+      }
+    },
+    "collectCoverageFrom": [
+      "src/*.{js,ts}"
+    ]
+  },
+  "devDependencies": {
+    "@types/jest": "^29.2.3",
+    "@types/lodash": "^4.14.189",
+    "@types/node": "^18.11.9",
+    "@typescript-eslint/eslint-plugin": "^5.43.0",
+    "@typescript-eslint/parser": "^5.43.0",
+    "coveralls": "^3.1.1",
+    "cross-env": "^7.0.3",
+    "eslint": "^8.27.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "jest": "^29.3.1",
+    "jest-config": "^29.3.1",
+    "prettier": "^2.7.1",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^29.0.3",
+    "ts-node": "^10.9.1",
+    "type-fest": "^3.2.0",
+    "typedoc": "^0.23.21",
+    "typescript": "^4.9.3"
+  },
+  "dependencies": {
+    "@ghii/ghii-next": "^1.0.9-beta",
+    "lodash": "^4.17.21"
+  }
+}
