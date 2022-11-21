@@ -1,6 +1,6 @@
 {
   "name": "@iad-os/ghenghi",
-  "version": "0.0.2-beta",
+  "version": "0.0.3-beta",
   "description": "Yes... only if necessary, but... I will kill Ghii",
   "maintainers": [
     {
@@ -99,6 +99,6 @@
     "@sinclair/typebox": "0.25.8"
   },
   "peerDependencies": {
-    "@ghii/ghii-next": ">=1.0.10-beta"
+    "@ghii/ghii-next": "1.0.11-beta"
   }
 }
