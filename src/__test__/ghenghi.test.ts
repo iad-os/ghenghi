@@ -44,12 +44,18 @@ describe('Ghenghi Config', () => {
   it('load without refresh config', () => {
     const ghiiInstance = ghii(T =>
       T.Object({
-        foo: T.Object({
-          prop1: T.String({ default: 'prop1' }),
-        }),
-        foo2: T.Object({
-          prop1: T.String({ default: 'prop1' }),
-        }),
+        foo: T.Object(
+          {
+            prop1: T.String(),
+          },
+          { default: { prop1: 'prop1' } }
+        ),
+        foo2: T.Object(
+          {
+            prop1: T.String(),
+          },
+          { default: { prop1: 'prop1' } }
+        ),
       })
     );
 
@@ -60,12 +66,18 @@ describe('Ghenghi Config', () => {
   it('load without bullet path config', async () => {
     const ghiiInstance = ghii(T =>
       T.Object({
-        foo: T.Object({
-          prop1: T.String({ default: 'prop1' }),
-        }),
-        foo2: T.Object({
-          prop1: T.String({ default: 'prop1' }),
-        }),
+        foo: T.Object(
+          {
+            prop1: T.String(),
+          },
+          { default: { prop1: 'prop1' } }
+        ),
+        foo2: T.Object(
+          {
+            prop1: T.String(),
+          },
+          { default: { prop1: 'prop1' } }
+        ),
       })
     );
 
@@ -77,12 +89,18 @@ describe('Ghenghi Config', () => {
     it('reload snapshot with bullet path', async () => {
       const ghiiInstance = ghii(T =>
         T.Object({
-          foo: T.Object({
-            prop1: T.String({ default: 'prop1' }),
-          }),
-          foo2: T.Object({
-            prop1: T.String({ default: 'prop1' }),
-          }),
+          foo: T.Object(
+            {
+              prop1: T.String(),
+            },
+            { default: { prop1: 'prop1' } }
+          ),
+          foo2: T.Object(
+            {
+              prop1: T.String(),
+            },
+            { default: { prop1: 'prop1' } }
+          ),
         })
       );
       const result = await ghiiInstance.takeSnapshot();
@@ -106,12 +124,18 @@ describe('Ghenghi Config', () => {
     it('reload snapshot without bullet path', async () => {
       const ghiiInstance = ghii(T =>
         T.Object({
-          foo: T.Object({
-            prop1: T.String({ default: 'prop1' }),
-          }),
-          foo2: T.Object({
-            prop1: T.String({ default: 'prop1' }),
-          }),
+          foo: T.Object(
+            {
+              prop1: T.String(),
+            },
+            { default: { prop1: 'prop1' } }
+          ),
+          foo2: T.Object(
+            {
+              prop1: T.String(),
+            },
+            { default: { prop1: 'prop1' } }
+          ),
         })
       );
       const result = await ghiiInstance.takeSnapshot();
@@ -135,9 +159,12 @@ describe('Ghenghi Config', () => {
     it('reload snapshot (min max)', async () => {
       const ghiiInstance = ghii(Type =>
         Type.Object({
-          foo: Type.Object({
-            prop: Type.String({ maxLength: 3, minLength: 3, default: 'min' }),
-          }),
+          foo: Type.Object(
+            {
+              prop: Type.String({ maxLength: 3, minLength: 3, default: 'min' }),
+            },
+            { default: { prop: 'min' } }
+          ),
         })
       );
       await ghiiInstance.takeSnapshot();
@@ -157,9 +184,12 @@ describe('Ghenghi Config', () => {
     it('reload snapshot change by root', async () => {
       const ghiiInstance = ghii(Type =>
         Type.Object({
-          foo: Type.Object({
-            prop: Type.String({ maxLength: 3, minLength: 3, default: 'min' }),
-          }),
+          foo: Type.Object(
+            {
+              prop: Type.String({ maxLength: 3, minLength: 3 }),
+            },
+            { default: { prop: 'min' } }
+          ),
         })
       );
       await ghiiInstance.takeSnapshot();

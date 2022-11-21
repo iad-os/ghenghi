@@ -2,7 +2,7 @@ import { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@gh
 import { TSchema } from '@sinclair/typebox';
 import { Edit } from '@sinclair/typebox/value';
 import { EventEmitter } from 'events';
-import { intersection, intersectionWith, isEmpty } from 'lodash';
+import { intersectionWith, isEmpty } from 'lodash';
 import { ValueOf } from 'type-fest';
 import TypedEventEmitter from './TypedEventEmitter';
 
