@@ -95,7 +95,10 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
-    "@ghii/ghii-next": "^1.0.9-beta",
-    "lodash": "^4.17.21"
+    "lodash": "^4.17.21",
+    "@sinclair/typebox": "0.25.8"
+  },
+  "peerDependencies": {
+    "@ghii/ghii-next": ">=1.0.10-beta"
   }
 }
