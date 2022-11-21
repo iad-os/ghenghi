@@ -154,5 +154,27 @@ describe('Ghenghi Config', () => {
       expect(ev.diff).toMatchObject([{ path: '/foo/prop', bullet: true }]);
       target.stop();
     });
+    it('reload snapshot change by root', async () => {
+      const ghiiInstance = ghii(Type =>
+        Type.Object({
+          foo: Type.Object({
+            prop: Type.String({ maxLength: 3, minLength: 3, default: 'min' }),
+          }),
+        })
+      );
+      await ghiiInstance.takeSnapshot();
+      const target = Ghenghi(ghiiInstance, { bulletPaths: ['/foo'], refreshSnapshotInterval: 3 });
+      jest.advanceTimersToNextTimer();
+      const ev = await new Promise<EventTypes['ghenghi:shot']>(resolve => {
+        target.once('ghenghi:shot', ev => {
+          resolve(ev);
+        });
+        target.run();
+        ghiiInstance.loader(async () => ({ foo: { prop: 'max' } }));
+        ghiiInstance.takeSnapshot();
+      });
+      expect(ev.diff).toMatchObject([{ path: '/foo/prop', bullet: true }]);
+      target.stop();
+    });
   });
 });

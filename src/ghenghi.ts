@@ -2,7 +2,7 @@ import { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@gh
 import { TSchema } from '@sinclair/typebox';
 import { Edit } from '@sinclair/typebox/value';
 import { EventEmitter } from 'events';
-import { intersection, isEmpty } from 'lodash';
+import { intersection, intersectionWith, isEmpty } from 'lodash';
 import { ValueOf } from 'type-fest';
 import TypedEventEmitter from './TypedEventEmitter';
 
@@ -43,7 +43,7 @@ const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOpti
   const ghiiNewVersionListener: (event: GhiiEventTypes<O>['ghii:version:new']) => void = ({ value, diff }) => {
     if (!isEmpty(bulletPaths) && !isEmpty(diff)) {
       const changedPaths = diff.map(({ path }) => path);
-      const bullets = intersection(changedPaths, bulletPaths);
+      const bullets = intersectionWith(changedPaths, bulletPaths, (c, b) => c === b || c.startsWith(b));
       !isEmpty(bullets) &&
         events.emit('ghenghi:shot', {
           value,
@@ -53,12 +53,16 @@ const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOpti
   };
 
   const run = () => {
-    interval = setInterval(() => {
-      ghii.takeSnapshot().catch(err => {
-        events.emit('ghenghi:recoil', err);
-      });
-    }, refreshSnapshotInterval * 1000);
     ghii.on('ghii:version:new', ghiiNewVersionListener);
+
+    interval = setInterval(
+      /* istanbul ignore next */ () => {
+        ghii.takeSnapshot().catch(err => {
+          events.emit('ghenghi:recoil', err);
+        });
+      },
+      refreshSnapshotInterval * 1000
+    );
   };
 
   const stop = () => {
