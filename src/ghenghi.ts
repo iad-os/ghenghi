@@ -53,12 +53,16 @@ const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOpti
   };
 
   const run = () => {
-    interval = setInterval(() => {
-      ghii.takeSnapshot().catch(err => {
-        events.emit('ghenghi:recoil', err);
-      });
-    }, refreshSnapshotInterval * 1000);
     ghii.on('ghii:version:new', ghiiNewVersionListener);
+
+    interval = setInterval(
+      /* istanbul ignore next */ () => {
+        ghii.takeSnapshot().catch(err => {
+          events.emit('ghenghi:recoil', err);
+        });
+      },
+      refreshSnapshotInterval * 1000
+    );
   };
 
   const stop = () => {
