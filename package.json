@@ -1,6 +1,6 @@
 {
   "name": "@iad-os/ghenghi",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Yes... only if necessary, but... I will kill Ghii",
   "maintainers": [
     {
@@ -74,6 +74,7 @@
     ]
   },
   "devDependencies": {
+    "@ghii/ghii": "^1.0.0",
     "@types/jest": "^29.2.3",
     "@types/lodash": "^4.14.189",
     "@types/node": "^18.11.9",
@@ -95,10 +96,7 @@
     "typescript": "^4.9.3"
   },
   "dependencies": {
-    "lodash": "^4.17.21",
-    "@sinclair/typebox": "0.25.8"
-  },
-  "peerDependencies": {
-    "@ghii/ghii": "1.0.x"
+    "@sinclair/typebox": "0.25.8",
+    "lodash": "^4.17.21"
   }
 }
