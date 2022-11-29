@@ -1,6 +1,5 @@
-import ghii from '@ghii/ghii-next';
-import Ghenghi, { EventTypes, GhenghiEmitter } from '../ghenghi';
-import { EventTypes as GhiiEventTypes } from '@ghii/ghii-next';
+import ghii, { EventTypes as GhiiEventTypes } from '@ghii/ghii';
+import Ghenghi, { EventTypes } from '../ghenghi';
 
 describe('Ghenghi Config', () => {
   beforeEach(() => {
