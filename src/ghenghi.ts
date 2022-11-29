@@ -1,4 +1,4 @@
-import { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@ghii/ghii-next';
+import { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@ghii/ghii';
 import { TSchema } from '@sinclair/typebox';
 import { Edit } from '@sinclair/typebox/value';
 import { EventEmitter } from 'events';
