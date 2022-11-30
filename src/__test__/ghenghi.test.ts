@@ -1,5 +1,5 @@
 import ghii, { EventTypes as GhiiEventTypes } from '@ghii/ghii';
-import Ghenghi, { EventTypes } from '../ghenghi';
+import { Ghenghi, EventTypes } from '../ghenghi';
 
 describe('Ghenghi Config', () => {
   beforeEach(() => {

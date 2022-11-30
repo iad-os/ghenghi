@@ -33,7 +33,7 @@ export interface EventTypes<O extends TSchema = TSchema> {
 export interface GhenghiEmitter<O extends TSchema> extends TypedEventEmitter<EventTypes<O>> {}
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOptions): GhenghiInstance<O> => {
+export const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOptions): GhenghiInstance<O> => {
   const { refreshSnapshotInterval = 60, bulletPaths = [] } = options || {};
 
   let interval: NodeJS.Timer | undefined = undefined;
