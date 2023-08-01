@@ -1,6 +1,6 @@
 import { ghii, EventTypes as GhiiEventTypes } from '@ghii/ghii-es';
-import { Ghenghi, EventTypes } from '../ghenghi';
-import { describe, vi, beforeEach, it, expect } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { EventTypes, Ghenghi } from '../ghenghi.js';
 
 describe('Ghenghi Config', () => {
   beforeEach(() => {

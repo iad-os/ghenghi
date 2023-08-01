@@ -1,10 +1,10 @@
 import type { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@ghii/ghii-es';
 import { TSchema } from '@sinclair/typebox';
 import { Edit } from '@sinclair/typebox/value';
-import { EventEmitter } from 'events';
 import { intersectionWith, isEmpty } from 'lodash-es';
+import { EventEmitter } from 'node:events';
 import { ValueOf } from 'type-fest';
-import { TypedEventEmitter } from './TypedEventEmitter';
+import type { TypedEventEmitter } from './TypedEventEmitter.js';
 
 export interface GhenghiOptions {
   refreshSnapshotInterval?: number;
