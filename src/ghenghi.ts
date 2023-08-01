@@ -1,18 +1,16 @@
-import type { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@ghii/ghii';
+import type { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@ghii/ghii-es';
 import { TSchema } from '@sinclair/typebox';
 import { Edit } from '@sinclair/typebox/value';
 import { EventEmitter } from 'events';
-import { intersectionWith, isEmpty } from 'lodash';
+import { intersectionWith, isEmpty } from 'lodash-es';
 import { ValueOf } from 'type-fest';
-import TypedEventEmitter from './TypedEventEmitter';
+import { TypedEventEmitter } from './TypedEventEmitter';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface GhenghiOptions {
   refreshSnapshotInterval?: number;
   bulletPaths?: string[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface GhenghiInstance<O extends TSchema> {
   run: () => void;
   stop: () => void;
@@ -25,14 +23,12 @@ export type GhenghiEdit = Edit & { bullet: boolean };
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export interface EventTypes<O extends TSchema = TSchema> {
   'ghenghi:shot': { value: SnapshotVersion<O>; diff: GhenghiEdit[] };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  'ghenghi:recoil': { err: any };
+  'ghenghi:recoil': { err: unknown };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface GhenghiEmitter<O extends TSchema> extends TypedEventEmitter<EventTypes<O>> {}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOptions): GhenghiInstance<O> => {
   const { refreshSnapshotInterval = 60, bulletPaths = [] } = options || {};
 
@@ -76,5 +72,3 @@ export const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: Ghen
     once: events.once.bind(events),
   };
 };
-
-export default Ghenghi;

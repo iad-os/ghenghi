@@ -7,7 +7,7 @@
  * @interface TypedEventEmitter
  * @template T
  */
-export default interface TypedEventEmitter<T> {
+export interface TypedEventEmitter<T> {
   on<K extends keyof T>(name: K, listener: (v: T[K]) => void): this;
   addListener<K extends keyof T>(event: K, listener: (v: T[K]) => void): this;
   once<K extends keyof T>(event: K, listener: (v: T[K]) => void): this;

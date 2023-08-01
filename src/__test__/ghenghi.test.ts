@@ -1,9 +1,10 @@
-import ghii, { EventTypes as GhiiEventTypes } from '@ghii/ghii';
+import { ghii, EventTypes as GhiiEventTypes } from '@ghii/ghii-es';
 import { Ghenghi, EventTypes } from '../ghenghi';
+import { describe, vi, beforeEach, it, expect } from 'vitest';
 
 describe('Ghenghi Config', () => {
   beforeEach(() => {
-    jest.useFakeTimers();
+    vi.useFakeTimers();
   });
   it('Ghenghi is instantiable', () => {
     expect(Ghenghi).toBeDefined();
@@ -104,7 +105,7 @@ describe('Ghenghi Config', () => {
       );
       const result = await ghiiInstance.takeSnapshot();
       const target = Ghenghi(ghiiInstance, { bulletPaths: ['/foo/prop1'], refreshSnapshotInterval: 3 });
-      jest.advanceTimersToNextTimer();
+      vi.advanceTimersToNextTimer();
       const ev = await new Promise<EventTypes['ghenghi:shot']>(resolve => {
         target.once('ghenghi:shot', ev => {
           resolve(ev);
@@ -139,7 +140,7 @@ describe('Ghenghi Config', () => {
       );
       const result = await ghiiInstance.takeSnapshot();
       const target = Ghenghi(ghiiInstance, { refreshSnapshotInterval: 3 });
-      jest.advanceTimersToNextTimer();
+      vi.advanceTimersToNextTimer();
       const ev = await new Promise<GhiiEventTypes<any>['ghii:version:new']>(resolve => {
         ghiiInstance.once('ghii:version:new', ev => {
           resolve(ev);
@@ -168,7 +169,7 @@ describe('Ghenghi Config', () => {
       );
       await ghiiInstance.takeSnapshot();
       const target = Ghenghi(ghiiInstance, { bulletPaths: ['/foo/prop'], refreshSnapshotInterval: 3 });
-      jest.advanceTimersToNextTimer();
+      vi.advanceTimersToNextTimer();
       const ev = await new Promise<EventTypes['ghenghi:shot']>(resolve => {
         target.once('ghenghi:shot', ev => {
           resolve(ev);
@@ -193,7 +194,7 @@ describe('Ghenghi Config', () => {
       );
       await ghiiInstance.takeSnapshot();
       const target = Ghenghi(ghiiInstance, { bulletPaths: ['/foo'], refreshSnapshotInterval: 3 });
-      jest.advanceTimersToNextTimer();
+      vi.advanceTimersToNextTimer();
       const ev = await new Promise<EventTypes['ghenghi:shot']>(resolve => {
         target.once('ghenghi:shot', ev => {
           resolve(ev);
