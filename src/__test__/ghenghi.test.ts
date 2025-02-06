@@ -1,6 +1,7 @@
 import { ghii, EventTypes as GhiiEventTypes } from '@ghii/ghii-es';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { EventTypes, Ghenghi } from '../ghenghi.js';
+import { TSchema } from '@sinclair/typebox';
 
 describe('Ghenghi Config', () => {
   beforeEach(() => {
@@ -141,7 +142,7 @@ describe('Ghenghi Config', () => {
       const result = await ghiiInstance.takeSnapshot();
       const target = Ghenghi(ghiiInstance, { refreshSnapshotInterval: 3 });
       vi.advanceTimersToNextTimer();
-      const ev = await new Promise<GhiiEventTypes<any>['ghii:version:new']>(resolve => {
+      const ev = await new Promise<GhiiEventTypes<TSchema>['ghii:version:new']>(resolve => {
         ghiiInstance.once('ghii:version:new', ev => {
           resolve(ev);
         });
