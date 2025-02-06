@@ -32,7 +32,7 @@ export interface GhenghiEmitter<O extends TSchema> extends TypedEventEmitter<Eve
 export const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOptions): GhenghiInstance<O> => {
   const { refreshSnapshotInterval = 60, bulletPaths = [] } = options || {};
 
-  let interval: NodeJS.Timer | undefined = undefined;
+  let interval: NodeJS.Timeout | undefined = undefined;
 
   const events = new EventEmitter() as unknown as GhenghiEmitter<O>;
 
