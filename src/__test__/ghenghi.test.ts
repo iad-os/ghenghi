@@ -135,8 +135,8 @@ describe('Ghenghi Config', () => {
       const target = Ghenghi(ghiiInstance, { refreshSnapshotInterval: 3 });
 
       const ev = await new Promise<{ config: unknown; previousConfig: unknown }>(resolve => {
-        ghiiInstance.once('ghii:refresh', ev => {
-          if (ev.previousConfig !== undefined) resolve(ev as { config: unknown; previousConfig: unknown });
+        ghiiInstance.once('ghii:refresh', (ev: { config: unknown; previousConfig: unknown }) => {
+          if (ev.previousConfig !== undefined) resolve(ev);
         });
         target.run();
         ghiiInstance.loader(async () => ({ foo: { prop1: 'prop10' } }));
