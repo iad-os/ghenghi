@@ -1,2 +1,2 @@
-let test = 0;
-export default ++test;
+let _test = 0;
+export default ++_test;

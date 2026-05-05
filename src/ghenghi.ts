@@ -1,68 +1,104 @@
-import type { EventTypes as GhiiEventTypes, GhiiInstance, SnapshotVersion } from '@ghii/ghii';
-import { TSchema } from '@sinclair/typebox';
-import { Edit } from '@sinclair/typebox/value';
-import { EventEmitter } from 'events';
-import { intersectionWith, isEmpty } from 'lodash';
-import { ValueOf } from 'type-fest';
-import TypedEventEmitter from './TypedEventEmitter';
+import { EventEmitter } from 'node:events';
+import type TypedEventEmitter from './TypedEventEmitter.js';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface GhenghiOptions {
   refreshSnapshotInterval?: number;
   bulletPaths?: string[];
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface GhenghiInstance<O extends TSchema> {
-  run: () => void;
-  stop: () => void;
-  on: ValueOf<Pick<GhenghiEmitter<O>, 'on'>>;
-  once: ValueOf<Pick<GhenghiEmitter<O>, 'once'>>;
+export type EditType = 'U' | 'C' | 'D';
+
+export interface Edit {
+  type: EditType;
+  path: string;
+  value?: unknown;
 }
 
 export type GhenghiEdit = Edit & { bullet: boolean };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export interface EventTypes<O extends TSchema = TSchema> {
-  'ghenghi:shot': { value: SnapshotVersion<O>; diff: GhenghiEdit[] };
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  'ghenghi:recoil': { err: any };
+export interface EventTypes<Config = unknown> {
+  'ghenghi:shot': { value: Config; diff: GhenghiEdit[] };
+  'ghenghi:recoil': { err: unknown };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface GhenghiEmitter<O extends TSchema> extends TypedEventEmitter<EventTypes<O>> {}
+export interface GhenghiEmitter<Config> extends TypedEventEmitter<EventTypes<Config>> {}
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const Ghenghi = <O extends TSchema>(ghii: GhiiInstance<O>, options?: GhenghiOptions): GhenghiInstance<O> => {
-  const { refreshSnapshotInterval = 60, bulletPaths = [] } = options || {};
+/** Minimal structural interface satisfied by ghii-v2 instances. */
+export interface GhiiLike<Config> {
+  on(
+    event: 'ghii:refresh',
+    listener: (v: { version: number; config: Config | undefined; previousConfig: Config | undefined }) => void
+  ): unknown;
+  takeSnapshot(): Promise<Config>;
+}
 
-  let interval: NodeJS.Timer | undefined = undefined;
+export interface GhenghiInstance<Config> {
+  run: () => void;
+  stop: () => void;
+  on<K extends keyof EventTypes<Config>>(event: K, listener: (v: EventTypes<Config>[K]) => void): void;
+  once<K extends keyof EventTypes<Config>>(event: K, listener: (v: EventTypes<Config>[K]) => void): void;
+}
 
-  const events = new EventEmitter() as unknown as GhenghiEmitter<O>;
+function isPlainObject(val: unknown): val is Record<string, unknown> {
+  return typeof val === 'object' && val !== null && !Array.isArray(val);
+}
 
-  const ghiiNewVersionListener: (event: GhiiEventTypes<O>['ghii:version:new']) => void = ({ value, diff }) => {
-    if (!isEmpty(bulletPaths) && !isEmpty(diff)) {
-      const changedPaths = diff.map(({ path }) => path);
-      const bullets = intersectionWith(changedPaths, bulletPaths, (c, b) => c === b || c.startsWith(b));
-      !isEmpty(bullets) &&
-        events.emit('ghenghi:shot', {
-          value,
-          diff: diff.map<GhenghiEdit>(value => ({ ...value, bullet: !!bullets.find(path => path === value.path) })),
-        });
+function deepDiff(prev: unknown, next: unknown, path = ''): Edit[] {
+  if (prev === next) return [];
+  if (isPlainObject(prev) && isPlainObject(next)) {
+    const edits: Edit[] = [];
+    const allKeys = new Set([...Object.keys(prev), ...Object.keys(next)]);
+    for (const key of allKeys) {
+      const childPath = `${path}/${key}`;
+      if (!(key in prev)) {
+        edits.push({ type: 'C', path: childPath, value: next[key] });
+      } else if (!(key in next)) {
+        edits.push({ type: 'D', path: childPath });
+      } else {
+        edits.push(...deepDiff(prev[key], next[key], childPath));
+      }
+    }
+    return edits;
+  }
+  return [{ type: 'U', path, value: next }];
+}
+
+export const Ghenghi = <Config>(ghii: GhiiLike<Config>, options?: GhenghiOptions): GhenghiInstance<Config> => {
+  const { refreshSnapshotInterval = 60, bulletPaths = [] } = options ?? {};
+
+  let interval: ReturnType<typeof setInterval> | undefined;
+
+  const events = new EventEmitter() as unknown as GhenghiEmitter<Config>;
+
+  const ghiiRefreshListener = (active: {
+    version: number;
+    config: Config | undefined;
+    previousConfig: Config | undefined;
+  }) => {
+    if (active.previousConfig === undefined || bulletPaths.length === 0) return;
+
+    const diff = deepDiff(active.previousConfig, active.config);
+    if (diff.length === 0) return;
+
+    const changedPaths = diff.map(e => e.path);
+    const bullets = changedPaths.filter(c => bulletPaths.some(b => c === b || c.startsWith(b)));
+
+    if (bullets.length > 0) {
+      events.emit('ghenghi:shot', {
+        value: active.config as Config,
+        diff: diff.map(e => ({ ...e, bullet: bullets.includes(e.path) })),
+      });
     }
   };
 
   const run = () => {
-    ghii.on('ghii:version:new', ghiiNewVersionListener);
+    ghii.on('ghii:refresh', ghiiRefreshListener);
 
-    interval = setInterval(
-      /* istanbul ignore next */ () => {
-        ghii.takeSnapshot().catch(err => {
-          events.emit('ghenghi:recoil', err);
-        });
-      },
-      refreshSnapshotInterval * 1000
-    );
+    interval = setInterval(() => {
+      ghii.takeSnapshot().catch((err: unknown) => {
+        events.emit('ghenghi:recoil', { err });
+      });
+    }, refreshSnapshotInterval * 1000);
   };
 
   const stop = () => {
