@@ -45,6 +45,21 @@ function isPlainObject(val: unknown): val is Record<string, unknown> {
 
 function deepDiff(prev: unknown, next: unknown, path = ''): Edit[] {
   if (prev === next) return [];
+  if (Array.isArray(prev) && Array.isArray(next)) {
+    const edits: Edit[] = [];
+    const len = Math.max(prev.length, next.length);
+    for (let i = 0; i < len; i++) {
+      const childPath = `${path}/${i}`;
+      if (i >= prev.length) {
+        edits.push({ type: 'C', path: childPath, value: next[i] });
+      } else if (i >= next.length) {
+        edits.push({ type: 'D', path: childPath });
+      } else {
+        edits.push(...deepDiff(prev[i], next[i], childPath));
+      }
+    }
+    return edits;
+  }
   if (isPlainObject(prev) && isPlainObject(next)) {
     const edits: Edit[] = [];
     const allKeys = new Set([...Object.keys(prev), ...Object.keys(next)]);
